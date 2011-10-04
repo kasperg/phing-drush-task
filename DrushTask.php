@@ -64,10 +64,11 @@ class DrushTask extends Task {
   private $root = NULL;
   private $assume = NULL;
   private $simulate = FALSE;
-  private $pipe_property = NULL;
+  private $pipe = FALSE;
   private $options = array();
   private $params = array();
-  private $pipe_glue = "\n";
+  private $return_glue = "\n";
+  private $return_property = NULL;
   private $verbose = FALSE;
 
   /**
@@ -122,17 +123,29 @@ class DrushTask extends Task {
   }
 
   /**
-   * The name of a Phing property to 'pipe' the Drush command's output to.
+   * Use the pipe option.
    */
-  public function setPipe($property) {
-    $this->pipe_property = (string) $property;
+  public function setPipe($var) {
+    if (is_string($var)) {
+      $var = strtolower($var);
+      $this->pipe = ($var === 'yes' || $var === 'true');
+    } else {
+      $this->pipe = !!$var;
+    }
   }
 
   /**
-   * The 'glue' characters used between each line of the piped output.
+   * The 'glue' characters used between each line of the returned output.
    */
-  public function setPipeGlue($glue) {
-    $this->pipe_glue = (string) $glue;
+  public function setReturnGlue($str) {
+    $this->return_glue = (string) $str;
+  }
+
+  /**
+   * The name of a Phing property to assign the Drush command's output to.
+   */
+  public function setReturnProperty($str) {
+    $this->return_property = $str;
   }
 
   /**
@@ -212,7 +225,7 @@ class DrushTask extends Task {
       $this->options[] = $option;
     }
 
-    if (!empty($this->pipe_property)) {
+    if ($this->pipe) {
       $option = new DrushOption();
       $option->setName('pipe');
       $this->options[] = $option;
@@ -245,8 +258,8 @@ class DrushTask extends Task {
       $this->log($line);
     }
     // Set value of the 'pipe' property
-    if (!empty($this->pipe_property)) {
-      $this->getProject()->setProperty($this->pipe_property, implode($this->pipe_glue, $output));
+    if (!empty($this->return_property)) {
+      $this->getProject()->setProperty($this->return_property, implode($this->return_glue, $output));
     }
     // Build fail
     if ($return != 0) {
