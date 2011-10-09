@@ -8,7 +8,7 @@ Installation and Usage
 ----------------------------------
 To use the drush task in your build file,  it must be made available to Phing so that the buildfile parser is aware a correlating XML element and it's parameters.  This is done by adding a <taskdef> tak to your build file, something like (see Phing documentation[3] for more information on the <taskdef> task).
 
-  <taskdef name="myecho" classname="DrushTask" />
+  <taskdef name="drush" classname="DrushTask" />
   
 Base Drush options are mapped to attribute of the Drush task. Parameters are wrapped in elements. Value of a parameter is defined by the text child of the element. Options are mapped to elements with a name attribute. Value of an option can either be in the value attribute of the element or as text child (like params).
 drush site-install --yes --locale=uk --site-name =${sitename} expert
