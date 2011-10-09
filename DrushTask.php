@@ -2,7 +2,7 @@
 
 /**
  * @file
- * A Phing task to run Drush commands
+ * A Phing task to run Drush commands.
  */
 require_once "phing/Task.php";
 
@@ -249,19 +249,19 @@ class DrushTask extends Task {
 
     $command = implode(' ', $command);
 
-    // Execute Drush
+    // Execute Drush.
     $this->log("Executing '$command'...");
     $output = array();
     exec($command, $output, $return);
-    // Collect Drush output for display through Phing's log
+    // Collect Drush output for display through Phing's log.
     foreach ($output as $line) {
       $this->log($line);
     }
-    // Set value of the 'pipe' property
+    // Set value of the 'pipe' property.
     if (!empty($this->return_property)) {
       $this->getProject()->setProperty($this->return_property, implode($this->return_glue, $output));
     }
-    // Build fail
+    // Build fail.
     if ($return != 0) {
       throw new BuildException("Drush exited with code $return");
     }
