@@ -70,6 +70,7 @@ class DrushTask extends Task {
   private $return_glue = "\n";
   private $return_property = NULL;
   private $verbose = FALSE;
+  private $haltonerror = TRUE;
 
   /**
    * The Drush command to run.
@@ -146,6 +147,18 @@ class DrushTask extends Task {
    */
   public function setReturnProperty($str) {
     $this->return_property = $str;
+  }
+
+  /**
+   * The name of a Phing property to assign the Drush command's output to.
+   */
+  public function setHaltonerror($var) {
+    if (is_string($var)) {
+      $var = strtolower($var);
+      $this->haltonerror = ($var === 'yes' || $var === 'true');
+    } else {
+      $this->haltonerror = !!$var;
+    }
   }
 
   /**
@@ -262,7 +275,7 @@ class DrushTask extends Task {
       $this->getProject()->setProperty($this->return_property, implode($this->return_glue, $output));
     }
     // Build fail.
-    if ($return != 0) {
+    if ($this->haltonerror && $return != 0) {
       throw new BuildException("Drush exited with code $return");
     }
     return $return != 0;
